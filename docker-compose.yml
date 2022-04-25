@@ -1,0 +1,33 @@
+version: '3.1'
+services:
+  api:
+    build: api
+    command: ["flask", "run", "--host=0.0.0.0"]
+    volumes:
+      - ./api:/backend
+    environment:
+      - FLASK_ENV=development
+      - FLASK_APP=api.py
+    ports:
+      - "3333:5000"
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t  
+
+  client:
+    build: client
+    command: ["npm", "start"]
+    volumes:
+      - ./client:/frontend
+      - node-modules:/frontend/node_modules
+    environment:
+      - NODE_ENV=development
+      - NODE_OPTIONS=--openssl-legacy-provider
+    ports:
+      - '3000:3000'
+    depends_on:
+      - api
+    stdin_open: true # docker run -i
+    tty: true        # docker run -t  
+
+volumes:
+  node-modules:
